@@ -2,11 +2,17 @@
   "name": "reddit-clone",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Matheus Henrique",
+    "email": "matheusz_7@hotmail.com",
+    "url": "https://matheus-henrique-portfolio.vercel.app"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -31,7 +37,7 @@
     "@radix-ui/react-toast": "^1.1.4",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/typography": "^0.5.9",
-    "@tanstack/react-query": "^4.29.11",
+    "@tanstack/react-query": "^4.29.14",
     "@types/node": "20.2.5",
     "@types/react": "18.2.7",
     "@types/react-dom": "18.2.4",
@@ -50,12 +56,14 @@
     "nanoid": "^4.0.2",
     "next": "13.4.4",
     "next-auth": "^4.22.1",
+    "nextjs-toploader": "^1.4.2",
     "postcss": "8.4.23",
     "prisma": "^4.14.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.44.2",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-textarea-autosize": "^8.4.1",
     "server-only": "^0.0.1",
     "sharp": "^0.32.1",
@@ -68,6 +76,13 @@
   },
   "devDependencies": {
     "@types/editorjs__header": "^2.6.0",
-    "@types/lodash.debounce": "^4.0.7"
+    "@types/lodash.debounce": "^4.0.7",
+    "@typescript-eslint/eslint-plugin": "^5.59.11",
+    "@typescript-eslint/parser": "^5.59.11",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^2.8.8"
   }
 }

@@ -1,50 +1,158 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
+}
+
+enum VoteType {
+    UP
+    DOWN
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.Text
+    session_state     String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+    @@unique([provider, providerAccountId])
+    @@index([userId])
+    @@index([id, userId])
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+    @@index([id, userId])
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
+    id            String    @id @default(cuid())
+    name          String?
+    email         String?   @unique
+    emailVerified DateTime?
+    username      String?   @unique
+    image         String?
 
-  image    String?
-  accounts Account[]
-  sessions Session[]
+    accounts          Account[]
+    sessions          Session[]
+    posts             Post[]
+    comments          Comment[]
+    commentsVotes     CommentVote[]
+    votes             Vote[]
+    createdSubreddits Subreddit[]    @relation("createdBy")
+    subscriptions     Subscription[]
+
+    @@index([id])
+    @@index([id, email])
+}
+
+model Subreddit {
+    id          String         @id @default(cuid())
+    name        String         @unique
+    posts       Post[]
+    creatorId   String
+    creator     User?          @relation("createdBy", fields: [creatorId], references: [id])
+    subscribers Subscription[]
+    createdAt   DateTime       @default(now())
+    updatedAt   DateTime       @updatedAt
+
+    @@index([id])
+    @@index([name])
+    @@index([creatorId])
+}
+
+model Subscription {
+    userId      String
+    user        User      @relation(fields: [userId], references: [id])
+    subredditId String
+    subreddit   Subreddit @relation(fields: [subredditId], references: [id])
+
+    @@id([userId, subredditId])
+    @@index([userId])
+    @@index([subredditId])
+}
+
+model Post {
+    id        String   @id @default(cuid())
+    title     String
+    content   Json?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    authorId    String
+    author      User      @relation(fields: [authorId], references: [id])
+    subredditId String
+    subreddit   Subreddit @relation(fields: [subredditId], references: [id])
+    comments    Comment[]
+    votes       Vote[]
+
+    @@index([id])
+    @@index([authorId])
+    @@index([subredditId])
+}
+
+model Comment {
+    id        String   @id @default(cuid())
+    text      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    post      Post          @relation(fields: [postId], references: [id])
+    postId    String
+    authorId  String
+    author    User          @relation(fields: [authorId], references: [id])
+    commentId String?
+    replyToId String?
+    replyTo   Comment?      @relation("ReplyTo", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    replies   Comment[]     @relation("ReplyTo")
+    votes     CommentVote[]
+
+    @@index([id])
+    @@index([postId])
+    @@index([authorId])
+    @@index([replyToId])
+}
+
+model Vote {
+    userId String
+    user   User     @relation(fields: [userId], references: [id])
+    postId String
+    post   Post     @relation(fields: [postId], references: [id])
+    type   VoteType
+
+    @@id([userId, postId])
+    @@index([userId])
+    @@index([postId])
+}
+
+model CommentVote {
+    userId    String
+    user      User     @relation(fields: [userId], references: [id])
+    commentId String
+    comment   Comment  @relation(fields: [commentId], references: [id])
+    type      VoteType
+
+    @@id([userId, commentId])
+    @@index([commentId])
+    @@index([userId])
 }
