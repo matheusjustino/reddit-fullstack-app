@@ -75,7 +75,7 @@ const CreateComment: FC<CreateCommentProps> = ({ postId, replyToId }) => {
 							})
 						}
 						isLoading={isLoading}
-						disabled={isLoading}
+						disabled={isLoading || !input.length}
 					>
 						Post
 					</Button>

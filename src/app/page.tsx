@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { NextPage } from "next";
 import { HomeIcon } from "lucide-react";
 
 // LIBS
@@ -12,8 +11,8 @@ import { buttonVariants } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 
-const HomePage: NextPage = () => {
-	const session = getAuthSession();
+const HomePage = async () => {
+	const session = await getAuthSession();
 
 	return (
 		<>

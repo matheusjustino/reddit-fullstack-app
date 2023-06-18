@@ -1,158 +1,154 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider     = "mysql"
-    url          = env("DATABASE_URL")
-    relationMode = "prisma"
-}
-
-enum VoteType {
-    UP
-    DOWN
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? @db.Text
-    access_token      String? @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? @db.Text
-    session_state     String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@unique([provider, providerAccountId])
-    @@index([userId])
-    @@index([id, userId])
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@index([id, userId])
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@index([userId])
-    @@index([id, userId])
+  @@index([userId])
+  @@index([id, userId])
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    username      String?   @unique
-    image         String?
+  id                String         @id @default(cuid())
+  name              String?
+  email             String?        @unique
+  emailVerified     DateTime?
+  username          String?        @unique
+  image             String?
+  accounts          Account[]
+  sessions          Session[]
+  posts             Post[]
+  comments          Comment[]
+  commentsVotes     CommentVote[]
+  votes             Vote[]
+  createdSubreddits Subreddit[]    @relation("createdBy")
+  subscriptions     Subscription[]
 
-    accounts          Account[]
-    sessions          Session[]
-    posts             Post[]
-    comments          Comment[]
-    commentsVotes     CommentVote[]
-    votes             Vote[]
-    createdSubreddits Subreddit[]    @relation("createdBy")
-    subscriptions     Subscription[]
-
-    @@index([id])
-    @@index([id, email])
+  @@index([id])
+  @@index([id, email])
 }
 
 model Subreddit {
-    id          String         @id @default(cuid())
-    name        String         @unique
-    posts       Post[]
-    creatorId   String
-    creator     User?          @relation("createdBy", fields: [creatorId], references: [id])
-    subscribers Subscription[]
-    createdAt   DateTime       @default(now())
-    updatedAt   DateTime       @updatedAt
+  id          String         @id @default(cuid())
+  name        String         @unique
+  creatorId   String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  posts       Post[]
+  creator     User?          @relation("createdBy", fields: [creatorId], references: [id])
+  subscribers Subscription[]
 
-    @@index([id])
-    @@index([name])
-    @@index([creatorId])
+  @@index([id])
+  @@index([name])
+  @@index([creatorId])
 }
 
 model Subscription {
-    userId      String
-    user        User      @relation(fields: [userId], references: [id])
-    subredditId String
-    subreddit   Subreddit @relation(fields: [subredditId], references: [id])
+  userId      String
+  subredditId String
+  user        User      @relation(fields: [userId], references: [id])
+  subreddit   Subreddit @relation(fields: [subredditId], references: [id])
 
-    @@id([userId, subredditId])
-    @@index([userId])
-    @@index([subredditId])
+  @@id([userId, subredditId])
+  @@index([userId])
+  @@index([subredditId])
 }
 
 model Post {
-    id        String   @id @default(cuid())
-    title     String
-    content   Json?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id          String    @id @default(cuid())
+  title       String
+  content     Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  authorId    String
+  subredditId String
+  author      User      @relation(fields: [authorId], references: [id])
+  subreddit   Subreddit @relation(fields: [subredditId], references: [id])
+  comments    Comment[]
+  votes       Vote[]
 
-    authorId    String
-    author      User      @relation(fields: [authorId], references: [id])
-    subredditId String
-    subreddit   Subreddit @relation(fields: [subredditId], references: [id])
-    comments    Comment[]
-    votes       Vote[]
-
-    @@index([id])
-    @@index([authorId])
-    @@index([subredditId])
+  @@index([id])
+  @@index([authorId])
+  @@index([subredditId])
 }
 
 model Comment {
-    id        String   @id @default(cuid())
-    text      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String        @id @default(cuid())
+  text      String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  postId    String
+  authorId  String
+  commentId String?
+  replyToId String?
+  post      Post          @relation(fields: [postId], references: [id])
+  author    User          @relation(fields: [authorId], references: [id])
+  replyTo   Comment?      @relation("ReplyTo", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies   Comment[]     @relation("ReplyTo")
+  votes     CommentVote[]
 
-    post      Post          @relation(fields: [postId], references: [id])
-    postId    String
-    authorId  String
-    author    User          @relation(fields: [authorId], references: [id])
-    commentId String?
-    replyToId String?
-    replyTo   Comment?      @relation("ReplyTo", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    replies   Comment[]     @relation("ReplyTo")
-    votes     CommentVote[]
-
-    @@index([id])
-    @@index([postId])
-    @@index([authorId])
-    @@index([replyToId])
+  @@index([id])
+  @@index([postId])
+  @@index([authorId])
+  @@index([replyToId])
 }
 
 model Vote {
-    userId String
-    user   User     @relation(fields: [userId], references: [id])
-    postId String
-    post   Post     @relation(fields: [postId], references: [id])
-    type   VoteType
+  userId String
+  postId String
+  type   VoteType
+  user   User     @relation(fields: [userId], references: [id])
+  post   Post     @relation(fields: [postId], references: [id])
 
-    @@id([userId, postId])
-    @@index([userId])
-    @@index([postId])
+  @@id([userId, postId])
+  @@index([userId])
+  @@index([postId])
 }
 
 model CommentVote {
-    userId    String
-    user      User     @relation(fields: [userId], references: [id])
-    commentId String
-    comment   Comment  @relation(fields: [commentId], references: [id])
-    type      VoteType
+  userId    String
+  commentId String
+  type      VoteType
+  user      User     @relation(fields: [userId], references: [id])
+  comment   Comment  @relation(fields: [commentId], references: [id])
 
-    @@id([userId, commentId])
-    @@index([commentId])
-    @@index([userId])
+  @@id([userId, commentId])
+  @@index([commentId])
+  @@index([userId])
+}
+
+enum VoteType {
+  UP
+  DOWN
 }

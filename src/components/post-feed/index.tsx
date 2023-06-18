@@ -4,6 +4,7 @@ import { FC, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useIntersection } from "@mantine/hooks";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import axios from "axios";
 
 // CONFIG
@@ -11,8 +12,9 @@ import { INFINITE_SCROLLING_PAGINATION_RESULTS } from "@/config";
 
 // TYPES
 import { ExtendedPost } from "@/types/db";
-import { Post } from "../post";
-import { Loader2 } from "lucide-react";
+
+// COMPONENTS
+import { Post } from "@/components/post";
 
 interface PostFeedProps {
 	initialProps: ExtendedPost[];

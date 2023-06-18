@@ -4,10 +4,10 @@ import { z } from "zod";
 import type { CachedPost } from "@/types/redis";
 
 // LIBS
-import { PostVoteValidator } from "@/lib/validators/vote";
-import { getAuthSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redis } from "@/lib/redis";
+import { getAuthSession } from "@/lib/auth";
+import { PostVoteValidator } from "@/lib/validators/vote";
 
 const CACHE_AFTER_UPVOTES = 1;
 

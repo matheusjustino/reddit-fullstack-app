@@ -5,6 +5,7 @@ import { getAuthSession } from "@/lib/auth";
 
 // COMPONENTS
 import { Icons } from "@/components/icons";
+import { SearchBar } from "@/components/search-bar";
 import { buttonVariants } from "@/components/ui/button";
 import { UserAccountNav } from "@/components/user-account-nav";
 
@@ -24,6 +25,7 @@ const Navbar = async () => {
 				</Link>
 
 				{/** search bar */}
+				<SearchBar />
 
 				{/** sign-in button with button styles */}
 				{session ? (
