@@ -37,7 +37,7 @@ const AboutCommunity = ({
 		<Accordion
 			type="single"
 			collapsible
-			className="overflow-hidden h-fit rounded-lg border border-gray-200 order-first md:order-last"
+			className="overflow-hidden h-fit rounded-lg border border-gray-200 order-first md:order-last bg-white"
 			defaultValue="item-1"
 		>
 			<AccordionItem value="item-1">
