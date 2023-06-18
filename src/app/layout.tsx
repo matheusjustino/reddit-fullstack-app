@@ -53,7 +53,7 @@ export default function RootLayout({
 					<Toaster />
 					<NextTopLoader
 						showSpinner={false}
-						speed={200}
+						speed={100}
 						color="#ff4500"
 					/>
 				</body>

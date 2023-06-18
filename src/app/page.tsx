@@ -1,15 +1,25 @@
-import { buttonVariants } from "@/components/ui/button";
-import { HomeIcon } from "lucide-react";
-import { NextPage } from "next";
 import Link from "next/link";
+import { NextPage } from "next";
+import { HomeIcon } from "lucide-react";
+
+// LIBS
+import { getAuthSession } from "@/lib/auth";
+
+// COMPONENTS
+import { CustomFeed } from "@/components/custom-feed";
+import { GeneralFeed } from "@/components/general-feed";
+import { buttonVariants } from "@/components/ui/button";
 
 const HomePage: NextPage = () => {
+	const session = getAuthSession();
+
 	return (
 		<>
 			<h1 className="font-bold text-3xl md:text-xl">Your Feed</h1>
 
 			<div className="grid grid-cols md:grid-cols-3 gap-y-4 md:gap-x-4 py-6">
-				{/** feed */}
+				{/** @ts-expect-error server component */}
+				{session ? <CustomFeed /> : <GeneralFeed />}
 
 				{/** subreddit info */}
 				<div className="overflow-hidden h-fit rounded-lg border border-gray-200 order-first md:order-last">

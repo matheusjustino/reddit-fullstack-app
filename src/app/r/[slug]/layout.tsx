@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 
@@ -6,6 +7,7 @@ import { db } from "@/lib/db";
 import { getAuthSession } from "@/lib/auth";
 
 // COMPONENTS
+import { buttonVariants } from "@/components/ui/button";
 import { SubscribeLeaveToggle } from "@/components/subscribe-leave-toggle";
 
 interface LayoutPageProps {
@@ -113,6 +115,16 @@ const LayoutPage = async ({ children, params: { slug } }: LayoutPageProps) => {
 									isSubscribed={isSubscribed}
 								/>
 							) : null}
+
+							<Link
+								href={`r/${slug}/submit`}
+								className={buttonVariants({
+									variant: "outline",
+									className: "w-full mb-6",
+								})}
+							>
+								Create Post
+							</Link>
 						</dl>
 					</div>
 				</div>

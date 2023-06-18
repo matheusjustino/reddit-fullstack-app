@@ -9,6 +9,7 @@ import { getAuthSession } from "@/lib/auth";
 
 // COMPONENTS
 import { MiniCreatePost } from "@/components/mini-create-post";
+import { PostFeed } from "@/components/post-feed";
 
 interface SubredditPageProps {
 	params: {
@@ -48,6 +49,10 @@ const SubredditPage = async ({ params: { slug } }: SubredditPageProps) => {
 			<MiniCreatePost session={session} />
 
 			{/* TODO: Show posts in user feed */}
+			<PostFeed
+				initialProps={subreddit.posts}
+				subredditName={subreddit.name}
+			/>
 		</>
 	);
 };
