@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Prisma, Subreddit } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
@@ -8,7 +8,8 @@ import { Users } from "lucide-react";
 import debounce from "lodash.debounce";
 import axios from "axios";
 
-type QueryResult = (Subreddit & { _count: Prisma.SubredditCountOutputType })[];
+// HOOKS
+import { useOnClickOutside } from "@/hooks/use-on-click-outside";
 
 // COMPONENTS
 import {
@@ -20,8 +21,11 @@ import {
 	CommandList,
 } from "@/components/ui/command";
 
+type QueryResult = (Subreddit & { _count: Prisma.SubredditCountOutputType })[];
+
 const SearchBar: FC = () => {
 	const { push, refresh } = useRouter();
+	const commandRef = useRef<HTMLDivElement>(null);
 	const [input, setInput] = useState<string>("");
 	const {
 		data: queryResults,
@@ -38,6 +42,10 @@ const SearchBar: FC = () => {
 		enabled: false,
 	});
 
+	useOnClickOutside(commandRef, () => {
+		setInput("");
+	});
+
 	const request = debounce(() => {
 		refetch();
 	}, 500);
@@ -46,7 +54,10 @@ const SearchBar: FC = () => {
 	}, []);
 
 	return (
-		<Command className="relative rounded-lg border max-w-lg z-50 overflow-visible">
+		<Command
+			ref={commandRef}
+			className="relative rounded-lg border max-w-lg z-50 overflow-visible"
+		>
 			<CommandInput
 				value={input}
 				onValueChange={(text: string) => {

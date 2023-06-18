@@ -3,23 +3,26 @@
 import { FC, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useMutation } from "@tanstack/react-query";
 import { Comment, CommentVote, User } from "@prisma/client";
 import { MessageSquare } from "lucide-react";
+import axios, { AxiosError } from "axios";
 
 // LIBS
 import { formatTimeToNow } from "@/lib/utils";
+import { CommentRequest } from "@/lib/validators/comment";
+
+// HOOKS
+import { toast } from "@/hooks/use-toast";
+import { useCustomToasts } from "@/hooks/use-custom-toasts";
+import { useOnClickOutside } from "@/hooks/use-on-click-outside";
 
 // COMPONENTS
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { UserAvatar } from "@/components/user-avatar";
 import { CommentVotes } from "@/components/comment-votes";
-import { Button } from "@/components/ui/button";
-import { Label } from "../ui/label";
-import { Textarea } from "../ui/textarea";
-import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
-import { useCustomToasts } from "@/hooks/use-custom-toasts";
-import { toast } from "@/hooks/use-toast";
-import { CommentRequest } from "@/lib/validators/comment";
 
 type ExtendedComment = Comment & {
 	votes: CommentVote[];
@@ -47,6 +50,10 @@ const PostComment: FC<PostCommentProps> = ({
 	const commentRef = useRef<HTMLDivElement>(null);
 	const [isReplying, setIsReplying] = useState<boolean>(false);
 	const [input, setInput] = useState<string>("");
+
+	useOnClickOutside(commentRef, () => {
+		setIsReplying(false);
+	});
 
 	const { mutate: createPostComment, isLoading } = useMutation({
 		mutationKey: [`create-reply-comment-${comment.id}`],

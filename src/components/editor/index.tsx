@@ -47,7 +47,7 @@ const Editor: FC<EditorProps> = ({ subredditId }) => {
 				.post("/api/subreddit/post/create", data)
 				.then((res) => res.data);
 		},
-		onSuccess: (data) => {
+		onSuccess: () => {
 			const newPathname = pathname.split("/").slice(0, -1).join("/");
 			push(newPathname);
 			refresh();

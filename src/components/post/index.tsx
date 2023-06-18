@@ -31,6 +31,7 @@ const Post: FC<PostProps> = ({
 }) => {
 	const postRef = useRef<HTMLDivElement>(null);
 	const linkHref =
+		typeof window !== "undefined" &&
 		window.location.pathname === `/r/${subredditName}`
 			? subredditName
 			: `r/${subredditName}`;
