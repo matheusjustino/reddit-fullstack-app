@@ -10,6 +10,8 @@ import { CustomFeed } from "@/components/custom-feed";
 import { GeneralFeed } from "@/components/general-feed";
 import { buttonVariants } from "@/components/ui/button";
 
+export const dynamic = "force-dynamic";
+
 const HomePage: NextPage = () => {
 	const session = getAuthSession();
 
