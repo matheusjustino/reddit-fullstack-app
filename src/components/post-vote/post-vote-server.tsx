@@ -10,6 +10,7 @@ interface PostVoteServerProps {
 	initialVotesCount?: number;
 	initialVote?: VoteType | null;
 	getData?: () => Promise<(Post & { votes: Vote[] }) | null>;
+	hasBackButton?: boolean;
 }
 
 const wait = (ms: number) => new Promise((res) => setTimeout(res, ms));
@@ -19,6 +20,7 @@ const PostVoteServer = async ({
 	initialVotesCount,
 	initialVote,
 	getData,
+	hasBackButton,
 }: PostVoteServerProps) => {
 	const session = await getAuthSession();
 	let _votesCount = 0;
@@ -49,6 +51,7 @@ const PostVoteServer = async ({
 			postId={postId}
 			initialVotesCount={_votesCount}
 			initialVote={_currentVote}
+			hasBackButton={hasBackButton}
 		/>
 	);
 };

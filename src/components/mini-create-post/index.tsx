@@ -3,10 +3,12 @@
 import { FC } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Session } from "next-auth";
-import { UserAvatar } from "../user-avatar";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
 import { ImageIcon, Link2 } from "lucide-react";
+
+// COMPONENTS
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { UserAvatar } from "@/components/user-avatar";
 
 interface MiniCreatePostProps {
 	session: Session | null;
@@ -17,7 +19,7 @@ const MiniCreatePost: FC<MiniCreatePostProps> = ({ session }) => {
 	const pathname = usePathname();
 
 	return (
-		<li className="overflow-hidden rounded-md bg-white shadow">
+		<li className="overflow-hidden rounded-md bg-white shadow list-none">
 			<div className="h-full px-6 py-4 flex justify-between gap-6">
 				<div className="relative">
 					<UserAvatar
@@ -37,6 +39,7 @@ const MiniCreatePost: FC<MiniCreatePostProps> = ({ session }) => {
 				/>
 
 				<Button
+					className="hidden xs:block"
 					onClick={() => push(`${pathname}/submit`)}
 					variant="ghost"
 				>
@@ -44,6 +47,7 @@ const MiniCreatePost: FC<MiniCreatePostProps> = ({ session }) => {
 				</Button>
 
 				<Button
+					className="hidden xs:block"
 					onClick={() => push(`${pathname}/submit`)}
 					variant="ghost"
 				>

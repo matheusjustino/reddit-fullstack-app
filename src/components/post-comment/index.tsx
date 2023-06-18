@@ -122,8 +122,9 @@ const PostComment: FC<PostCommentProps> = ({
 					variant="ghost"
 					size="xs"
 					aria-label="reply"
+					className="text-xs sm:text-md"
 				>
-					<MessageSquare className="h-4 w-4 mr-1.5" />
+					<MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5" />
 					Reply
 				</Button>
 

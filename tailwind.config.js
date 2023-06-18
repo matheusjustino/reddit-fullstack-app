@@ -1,10 +1,15 @@
-const { fontFamily } = require("tailwindcss/defaultTheme");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { fontFamily, screens } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	darkMode: ["class"],
 	content: ["./src/app/**/*.{ts,tsx}", "./src/components/**/*.{ts,tsx}"],
 	theme: {
+		screens: {
+			xs: "475px",
+			...screens,
+		},
 		container: {
 			center: true,
 			padding: "2rem",

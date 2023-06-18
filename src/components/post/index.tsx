@@ -30,11 +30,14 @@ const Post: FC<PostProps> = ({
 	currentVote,
 }) => {
 	const postRef = useRef<HTMLDivElement>(null);
+	const linkHref =
+		window.location.pathname === `/r/${subredditName}`
+			? subredditName
+			: `r/${subredditName}`;
 
 	return (
 		<div className="rounded-md bg-white shadow">
 			<div className="px-6 py-4 flex justify-between">
-				{/** TODO: PostVotes */}
 				<PostVoteClient
 					postId={post.id}
 					initialVote={currentVote?.type}
@@ -46,7 +49,7 @@ const Post: FC<PostProps> = ({
 						{subredditName ? (
 							<>
 								<a
-									href={`r/${subredditName}`}
+									href={linkHref}
 									className="underline text-zinc-900 text-sm underline-offset-2"
 								>
 									r/{subredditName}
@@ -77,7 +80,7 @@ const Post: FC<PostProps> = ({
 				</div>
 			</div>
 
-			<div className="bg-gray-50 z-20 text-sm py-4 sm:px-6">
+			<div className="bg-gray-50 z-20 text-sm py-4 px-2 sm:px-6">
 				<a
 					href={`/r/${subredditName}/post/${post.id}`}
 					className="w-fit flex items-center gap-2"

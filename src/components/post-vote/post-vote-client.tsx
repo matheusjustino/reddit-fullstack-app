@@ -1,9 +1,10 @@
 "use client";
 
 import { FC, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { VoteType } from "@prisma/client";
 import { usePrevious } from "@mantine/hooks";
-import { ArrowBigDown, ArrowBigUp } from "lucide-react";
+import { ArrowBigDown, ArrowBigUp, CornerUpLeft } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
@@ -22,14 +23,17 @@ interface PostVoteClientProps {
 	postId: string;
 	initialVotesCount: number;
 	initialVote?: VoteType | null;
+	hasBackButton?: boolean;
 }
 
 const PostVoteClient: FC<PostVoteClientProps> = ({
 	postId,
 	initialVotesCount,
 	initialVote,
+	hasBackButton,
 }) => {
 	const { loginToast } = useCustomToasts();
+	const { back } = useRouter();
 	const [votesCount, setVotesCount] = useState<number>(initialVotesCount);
 	const [currentVote, setCurrentVote] = useState(initialVote);
 	const prevVote = usePrevious(currentVote);
@@ -87,6 +91,17 @@ const PostVoteClient: FC<PostVoteClientProps> = ({
 
 	return (
 		<div className="flex sm:flex-col gap-4 sm:gap-0 pr-6 sm:w-20 sm:pb-0">
+			{hasBackButton && (
+				<Button
+					onClick={back}
+					size="sm"
+					variant="ghost"
+					aria-label="upvote"
+				>
+					<CornerUpLeft className="w-5 h-5" />
+				</Button>
+			)}
+
 			<Button
 				onClick={() => votePost("UP")}
 				size="sm"

@@ -60,7 +60,7 @@ const PostFeed: FC<PostFeedProps> = ({ initialProps, subredditName }) => {
 	const posts = data?.pages.flatMap((page) => page) ?? initialProps;
 
 	return (
-		<ul className="flex flex-col col-span-2 space-y-6">
+		<ul className="flex flex-col sm:col-span-2 space-y-6">
 			{posts.map((post, index) => {
 				const votesCount = post.votes.reduce((prev, curr) => {
 					if (curr.type === "UP") return prev + 1;

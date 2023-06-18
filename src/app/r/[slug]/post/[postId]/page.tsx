@@ -1,15 +1,11 @@
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
-import { Post, User, Vote } from "@prisma/client";
 import { ArrowBigDown, ArrowBigUp, Loader2 } from "lucide-react";
 
-// TYPES
-import { CachedPost } from "@/types/redis";
-
 // LIBS
-import { db } from "@/lib/db";
-import { redis } from "@/lib/redis";
 import { formatTimeToNow } from "@/lib/utils";
+
+// HOOKS
+import { usePage } from "./usePage";
 
 // COMPONENTS
 import { buttonVariants } from "@/components/ui/button";
@@ -29,70 +25,44 @@ interface PostDetailsPageProps {
 const PostDetailsPage = async ({
 	params: { postId },
 }: PostDetailsPageProps) => {
-	const cachedPost = (await redis.hgetall(`post:${postId}`)) as CachedPost;
-	let post: (Post & { votes: Vote[]; author: User }) | null = null;
-	if (!cachedPost) {
-		post = await db.post.findFirst({
-			where: {
-				id: postId,
-			},
-			include: {
-				votes: true,
-				author: true,
-			},
-		});
-	}
-
-	if (!post && !cachedPost) return notFound();
-
-	const getData = async () => {
-		return await db.post.findUnique({
-			where: {
-				id: postId,
-			},
-			include: {
-				votes: true,
-			},
-		});
-	};
+	const { cachedPost, post, getData } = await usePage({ postId });
 
 	return (
-		<div>
-			<div className="h-full flex flex-col sm:flex-row items-center sm:items-start justify-between">
+		<div className="h-full flex flex-col sm:flex-row items-center sm:items-start justify-between">
+			<div className="flex items-center sm:flex-col">
 				<Suspense fallback={<PostVoteShell />}>
 					{/** @ts-expect-error server component */}
 					<PostVoteServer
 						postId={post?.id ?? cachedPost.id}
 						getData={getData}
+						hasBackButton
 					/>
 				</Suspense>
+			</div>
 
-				<div className="sm:w-0 w-full flex-1 bg-white p-4 rounded-sm">
-					<p className="max-h-40 mt-1 truncate text-sm text-gray-500">
-						Posted by u/
-						{post?.author.name ?? cachedPost.authorUsername}{" "}
-						{formatTimeToNow(
-							new Date(post?.createdAt ?? cachedPost.createdAt)
-						)}
-					</p>
+			<div className="sm:w-0 w-full flex-1 bg-white p-4 rounded-sm">
+				<p className="flex items-center gap-2 max-h-40 mt-1 truncate text-sm text-gray-500">
+					Posted by u/
+					{post?.author.name ?? cachedPost.authorUsername}{" "}
+					{formatTimeToNow(
+						new Date(post?.createdAt ?? cachedPost.createdAt)
+					)}
+				</p>
 
-					<h1 className="text-xl font-semibold py-2 leading-6 text-gray-900">
-						{post?.title ?? cachedPost.title}
-					</h1>
+				<h1 className="text-xl font-semibold py-2 leading-6 text-gray-900">
+					{post?.title ?? cachedPost.title}
+				</h1>
 
-					<EditorOutput
-						content={post?.content ?? cachedPost.content}
-					/>
+				<EditorOutput content={post?.content ?? cachedPost.content} />
 
-					<Suspense
-						fallback={
-							<Loader2 className="h-5 w-5 animate-spin text-zinc-500" />
-						}
-					>
-						{/** @ts-expect-error server component */}
-						<CommentsSection postId={post?.id ?? cachedPost.id} />
-					</Suspense>
-				</div>
+				<Suspense
+					fallback={
+						<Loader2 className="h-5 w-5 animate-spin text-zinc-500" />
+					}
+				>
+					{/** @ts-expect-error server component */}
+					<CommentsSection postId={post?.id ?? cachedPost.id} />
+				</Suspense>
 			</div>
 		</div>
 	);

@@ -7,20 +7,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import TextareaAutosize from "react-textarea-autosize";
 import type EditorJS from "@editorjs/editorjs";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 // HOOKS
 import { toast } from "@/hooks/use-toast";
+import { useCustomToasts } from "@/hooks/use-custom-toasts";
 
 // LIBS
-import { PostCreationRequest, PostValidator } from "@/lib/validators/post";
 import { uploadFiles } from "@/lib/uploadthing";
+import { PostCreationRequest, PostValidator } from "@/lib/validators/post";
 
 interface EditorProps {
 	subredditId: string;
 }
 
 const Editor: FC<EditorProps> = ({ subredditId }) => {
+	const { loginToast } = useCustomToasts();
 	const [isMounted, setIsMounted] = useState<boolean>(false);
 	const editorRef = useRef<EditorJS>();
 	const _titleRef = useRef<HTMLTextAreaElement>(null);
@@ -46,7 +48,6 @@ const Editor: FC<EditorProps> = ({ subredditId }) => {
 				.then((res) => res.data);
 		},
 		onSuccess: (data) => {
-			console.log({ data });
 			const newPathname = pathname.split("/").slice(0, -1).join("/");
 			push(newPathname);
 			refresh();
@@ -57,6 +58,11 @@ const Editor: FC<EditorProps> = ({ subredditId }) => {
 		},
 		onError: (error: any) => {
 			console.error(error);
+			if (error instanceof AxiosError) {
+				if (error.response?.status === 401) {
+					return loginToast();
+				}
+			}
 			return toast({
 				title: "Something went wrong",
 				description:

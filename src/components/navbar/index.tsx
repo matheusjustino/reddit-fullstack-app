@@ -38,7 +38,12 @@ const Navbar = async () => {
 						}}
 					/>
 				) : (
-					<Link href="/sign-in" className={buttonVariants()}>
+					<Link
+						href="/sign-in"
+						className={buttonVariants({
+							className: "whitespace-nowrap",
+						})}
+					>
 						Sign In
 					</Link>
 				)}
