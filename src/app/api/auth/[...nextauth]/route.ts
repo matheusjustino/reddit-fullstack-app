@@ -1,9 +1,7 @@
-import NextAuth, { getServerSession } from "next-auth";
+import NextAuth from "next-auth";
 
 // AUTH
 import { authOptions } from "@/lib/auth";
-
-export const getAuthSession = () => getServerSession(authOptions);
 
 const handler = NextAuth(authOptions);
 
