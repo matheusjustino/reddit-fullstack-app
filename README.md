@@ -11,10 +11,6 @@
 This application was developed with **`NextJs`**, **`NextAuth (Google Provider)`**, **`TailwindCSS`**, **`Shadcn-ui`**,
 **`Prisma`**, **`MySQL`**, **`Uploadthing`** and **`Upstash`**.
 
-## DEMO
-
-You can check the **[demo here](https://reddit-fullstack-app.vercel.app/)**.
-
 ## Screenshots
 
 ![Home](./screenshots/01.png)
